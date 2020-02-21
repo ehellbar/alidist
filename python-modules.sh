@@ -27,14 +27,13 @@ fi
 
 # We use a different INSTALLROOT, so that we can build updatable RPMS which
 # do not conflict with the underlying Python installation.
-PYTHON_MODULES_INSTALLROOT=$INSTALLROOT/share/python-modules
-mkdir -p $PYTHON_MODULES_INSTALLROOT
+PYTHON_MODULES_INSTALLROOT=/lustre/alice/users/hellbaer/python/venv3
 # FIXME: required because of the newly introduced dependency on scikit-garden requires
 # a numpy to be installed separately
 # See also:
 #   https://github.com/scikit-garden/scikit-garden/issues/23
-grep RootInteractive requirements.txt && env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install --user -IU numpy
-env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install --user -IU -r requirements.txt
+grep RootInteractive requirements.txt && env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install -IU numpy
+env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install -IU -r requirements.txt
 
 # Find the proper Python lib library and export it
 pushd "$PYTHON_MODULES_INSTALLROOT"
@@ -48,7 +47,7 @@ pushd "$PYTHON_MODULES_INSTALLROOT"
   popd
   pushd bin
     # Fix shebangs: remove hardcoded Python path
-    sed -i.deleteme -e "1 s|^#!${PYTHON_MODULES_INSTALLROOT}/bin/\(.*\)$|#!/usr/bin/env \1|" * || true
+#    sed -i.deleteme -e "1 s|^#!${PYTHON_MODULES_INSTALLROOT}/bin/\(.*\)$|#!/usr/bin/env \1|" * || true
     rm -f *.deleteme || true
   popd
 popd
@@ -57,7 +56,7 @@ popd
 MATPLOTLIB_TAG="3.0.3"
 if [[ $ARCHITECTURE != slc* ]]; then
   # Simply get it via pip in most cases
-  env PYTHONUSERBASE=$PYTHON_MODULES_INSTALLROOT pip3 install --user "matplotlib==$MATPLOTLIB_TAG"
+  env PYTHONUSERBASE=$PYTHON_MODULES_INSTALLROOT pip3 install "matplotlib==$MATPLOTLIB_TAG"
 else
 
   # We are on a RHEL-compatible OS. We compile it ourselves, and link it to our dependencies
@@ -95,7 +94,7 @@ env PYTHONPATH="$PYTHON_MODULES_INSTALLROOT/lib/python/site-packages" python3 -c
 
 # Patch long shebangs (by default max is 128 chars on Linux)
 pushd "$PYTHON_MODULES_INSTALLROOT/bin"
-  sed -i.deleteme -e '1 s|^#!.*$|#!/usr/bin/env python3|' * || true
+#  sed -i.deleteme -e '1 s|^#!.*$|#!/usr/bin/env python3|' * || true
   rm -f *.deleteme
 popd
 
