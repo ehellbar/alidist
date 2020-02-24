@@ -52,7 +52,7 @@ module-whatis "ALICE Modulefile for $PKGNAME $PKGVERSION-@@PKGREVISION@$PKGHASH@
 module load BASE/1.0
 EoF
   fi
-  exit 0
+#  exit 0
 ;;
 esac
 
