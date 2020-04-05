@@ -27,38 +27,19 @@ fi
 
 # We use a different INSTALLROOT, so that we can build updatable RPMS which
 # do not conflict with the underlying Python installation.
-PYTHON_MODULES_INSTALLROOT=/lustre/alice/users/hellbaer/python/venv3
 # FIXME: required because of the newly introduced dependency on scikit-garden requires
 # a numpy to be installed separately
 # See also:
 #   https://github.com/scikit-garden/scikit-garden/issues/23
-grep RootInteractive requirements.txt && env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install -IU numpy
-env PYTHONUSERBASE="$PYTHON_MODULES_INSTALLROOT" pip3 install -IU -r requirements.txt
-
-# Find the proper Python lib library and export it
-pushd "$PYTHON_MODULES_INSTALLROOT"
-  if [[ -d lib64 ]]; then
-    ln -nfs lib64 lib  # creates lib pointing to lib64
-  elif [[ -d lib ]]; then
-       ln -nfs lib lib64 # creates lib64 pointing to lib
-  fi
-  pushd lib
-    ln -nfs python$PYVER python
-  popd
-  pushd bin
-    # Fix shebangs: remove hardcoded Python path
-#    sed -i.deleteme -e "1 s|^#!${PYTHON_MODULES_INSTALLROOT}/bin/\(.*\)$|#!/usr/bin/env \1|" * || true
-    rm -f *.deleteme || true
-  popd
-popd
+grep RootInteractive requirements.txt && pip3 install -IU numpy
+pip3 install -IU -r requirements.txt
 
 # Install matplotlib (quite tricky)
 MATPLOTLIB_TAG="3.0.3"
 if [[ $ARCHITECTURE != slc* ]]; then
   # Simply get it via pip in most cases
-  env PYTHONUSERBASE=$PYTHON_MODULES_INSTALLROOT pip3 install "matplotlib==$MATPLOTLIB_TAG"
+  pip3 install "matplotlib==$MATPLOTLIB_TAG"
 else
-
   # We are on a RHEL-compatible OS. We compile it ourselves, and link it to our dependencies
 
   # Check if we can enable the Tk interface
@@ -90,19 +71,8 @@ EOF
 fi
 
 # Test if matplotlib can be loaded
-env PYTHONPATH="$PYTHON_MODULES_INSTALLROOT/lib/python/site-packages" python3 -c 'import matplotlib'
+python3 -c 'import matplotlib'
 
-# Patch long shebangs (by default max is 128 chars on Linux)
-pushd "$PYTHON_MODULES_INSTALLROOT/bin"
-#  sed -i.deleteme -e '1 s|^#!.*$|#!/usr/bin/env python3|' * || true
-  rm -f *.deleteme
-popd
-
-# Remove useless stuff
-rm -rvf "$PYTHON_MODULES_INSTALLROOT"/share "$PYTHON_MODULES_INSTALLROOT"/lib/python*/test
-find "$PYTHON_MODULES_INSTALLROOT"/lib/python* \
-     -mindepth 2 -maxdepth 2 -type d -and \( -name test -or -name tests \) \
-     -exec rm -rvf '{}' \;
 
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"

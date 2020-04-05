@@ -2,10 +2,11 @@ package: Python-modules-list
 version: "1.0"
 env:
   PIP_REQUIREMENTS: |
+    nbformat==4.4
     requests==2.21.0
     ipykernel==5.1.0
     ipython==7.4.0
-    ipywidgets==7.4.2
+    ipywidgets==7.5
     metakernel==0.20.14
     mock==2.0.0
     notebook==5.7.8

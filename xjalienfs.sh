@@ -12,7 +12,7 @@ requires:
 #!/bin/bash -e
 
 # env PYTHONUSERBASE="$INSTALLROOT" pip3 install --user -r alibuild_requirements.txt
-env PYTHONUSERBASE="$INSTALLROOT" ALIBUILD=1 pip3 install file://${SOURCEDIR}
+ALIBUILD=1 pip3 install file://${SOURCEDIR}
 XJALIENFS_SITEPACKAGES=$(find ${INSTALLROOT} -name site-packages)
 
 #sed -i".bak" 's/#!.*python.*/#!\/usr\/bin\/env python3/' ${INSTALLROOT}/bin/*
