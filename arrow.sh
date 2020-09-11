@@ -102,8 +102,7 @@ cmake ./src_tmp/cpp                                                             
       -DARROW_TENSORFLOW=ON                                                                         \
       -DARROW_GANDIVA=ON                                                                            \
       -DARROW_COMPUTE=ON                                                                            \
-      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON                                                        \
-      -DCLANG_EXECUTABLE=${CLANG_ROOT}/bin-safe/clang
+      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON                                                        
 
 make ${JOBS:+-j $JOBS}
 make install

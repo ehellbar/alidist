@@ -8,6 +8,10 @@ requires:
  - "GCC-Toolchain:(?!osx)"
 build_requires:
  - CMake
+prefer_system: .*
+prefer_system_check: |
+  set -e
+  which clang || { echo "clang missing"; exit 1; }
 ---
 #!/bin/sh
 
