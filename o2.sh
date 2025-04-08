@@ -39,7 +39,7 @@ build_requires:
   - O2-customization
   - Clang:(?!osx*)
   - ITSResponse
-source: https://github.com/AliceO2Group/AliceO2
+source: https://github.com/ehellbar/AliceO2
 env:
   VMCWORKDIR: "$O2_ROOT/share"
 prepend_path:
