@@ -1,7 +1,8 @@
 package: ROOT
 version: "%(tag_basename)s"
-tag: "v6-36-04-alice2"
+tag: "v6-36-04-alice9"
 source: https://github.com/alisw/root.git
+license: LGPLv2.1
 requires:
   - arrow
   - AliEn-Runtime:(?!.*ppc64)
@@ -102,7 +103,7 @@ fi
 # ROOT 6+: enable Python
 ROOT_PYTHON_FLAGS="-Dpyroot=ON"
 ROOT_HAS_PYTHON=1
-python_exec=$(python -c 'import distutils.sysconfig; print(distutils.sysconfig.get_config_var("exec_prefix"))')/bin/python3
+python_exec=$(python -c 'import sysconfig; print(sysconfig.get_config_var("exec_prefix"))')/bin/python3
 if [ "$python_exec" = "$(which python)" ]; then
   # By default, if there's nothing funny going on, let ROOT pick the Python in
   # the PATH, which is the one built by us (unless disabled, in which case it
@@ -153,6 +154,7 @@ cmake $SOURCEDIR                                                                
       ${ARROW_ROOT:+-Darrow=ON}                                                        \
       ${ARROW_ROOT:+-DARROW_HOME=$ARROW_ROOT}                                          \
       ${ENABLE_COCOA:+-Dcocoa=ON}                                                      \
+      -DCMAKE_IGNORE_PATH=/opt/homebrew/include                                        \
       ${EXTRA_CMAKE_OPTIONS}                                                           \
       -DCMAKE_CXX_COMPILER=$COMPILER_CXX                                               \
       -DCMAKE_C_COMPILER=$COMPILER_CC                                                  \

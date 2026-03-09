@@ -2,6 +2,7 @@ package: fastjet
 version: "%(tag_basename)s"
 tag: "v3.4.1_1.052-alice3"
 source: https://github.com/alisw/fastjet
+license: GPLv2
 requires:
   - cgal
   - GMP
@@ -15,6 +16,8 @@ case $ARCHITECTURE in
     [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost`
   ;;
 esac
+
+export RECC_LOG_LEVEL=error
 
 if [[ $GGAL_ROOT ]]; then
   export LIBRARY_PATH="${BOOST_ROOT:+$BOOST_ROOT/lib:}$LIBRARY_PATH"

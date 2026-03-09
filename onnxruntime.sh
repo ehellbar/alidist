@@ -1,6 +1,7 @@
 package: ONNXRuntime
 version: "%(tag_basename)s"
 tag: v1.22.0
+license: MIT
 source: https://github.com/microsoft/onnxruntime
 requires:
   - protobuf
@@ -30,6 +31,22 @@ rsync -a --chmod=ug=rwX --delete --exclude '**/.git' --delete-excluded $SOURCEDI
 sed -i.bak "s/eigen/Eigen3/g" cmake/external/eigen.cmake
 python3 -c 'import sys; print(sys.executable)'
 sed -i.bak "s/CMAKE_CXX_STANDARD 17/CMAKE_CXX_STANDARD 20/;s/-Wno-interference-size/-w/" cmake/CMakeLists.txt
+
+case $ARCHITECTURE in
+  osx*)
+    NLOHMANN_JSON_ROOT=${NLOHMANN_JSON_ROOT:-$(brew --prefix nlohmann-json)}
+    RE2_ROOT=${RE2_ROOT:-$(brew --prefix re2)}
+    BOOST_ROOT=${BOOST_ROOT:-$(brew --prefix boost)}
+    MS_GSL_ROOT=${MS_GSL_ROOT:-$(brew --prefix cpp-gsl)}
+  ;;
+esac
+
+export re2_DIR=${RE2_ROOT}
+export absl_DIR=${ABSEIL_ROOT}
+export abseil_cpp_DIR=${ABSEIL_ROOT}
+export GSL_DIR=${MS_GSL_ROOT}
+export mp11_DIR=${BOOST_ROOT}
+export CMAKE_PATH_PREFIX=${MS_GSL_ROOT}:${NLOHMANN_JSON_ROOT}:${ABSEIL_ROOT}:$CMAKE_PATH_PREFIX
 
 if [[ -f $GPU_SYSTEM_ROOT/etc/gpu-features-available.sh ]]; then
   source $GPU_SYSTEM_ROOT/etc/gpu-features-available.sh
@@ -76,6 +93,9 @@ export ORT_MIGRAPHX_BUILD=$ORT_MIGRAPHX_BUILD
 export ORT_TENSORRT_BUILD=$ORT_TENSORRT_BUILD
 EOF
 
+echo "O2_GPU_ROCM_HOME=$O2_GPU_ROCM_HOME"
+echo "O2_GPU_CUDA_HOME=$O2_GPU_CUDA_HOME"
+
 python3 onnxruntime/core/flatbuffers/schema/compile_schema.py --flatc $(which flatc)
 python3 onnxruntime/lora/adapter_format/compile_schema.py --flatc $(which flatc)
 
@@ -117,6 +137,10 @@ cmake "cmake"                                                                   
       -Donnxruntime_USE_FULL_PROTOBUF=ON                                                                    \
       -Donnxruntime_ENABLE_PYTHON=OFF                                                                       \
       -Donnxruntime_MINIMAL_BUILD=OFF                                                                       \
+      --debug-find-pkg=absl                                                                               \
+      ${ABSEIL_ROOT:+-DFETCHCONTENT_SOURCE_DIR_ABSEIL_CPP=${ABSEIL_ROOT}}                                   \
+      ${ABSEIL_ROOT:+-Dabseil_cpp_DIR=$ABSEIL_ROOT}                                                         \
+      ${ABSEIL_ROOT:+-Dabsl_DIR=$ABSEIL_ROOT}                                                               \
       ${PROTOBUF_ROOT:+-DProtobuf_LIBRARY=$PROTOBUF_ROOT/lib/libprotobuf.a}                                 \
       ${PROTOBUF_ROOT:+-DProtobuf_LITE_LIBRARY=$PROTOBUF_ROOT/lib/libprotobuf-lite.a}                       \
       ${PROTOBUF_ROOT:+-DProtobuf_PROTOC_LIBRARY=$PROTOBUF_ROOT/lib/libprotoc.a}                            \
@@ -126,8 +150,8 @@ cmake "cmake"                                                                   
       ${BOOST_ROOT:+-DBOOST_INCLUDE_DIR=${BOOST_ROOT}/include}                                              \
       -Donnxruntime_USE_MIGRAPHX=${ORT_MIGRAPHX_BUILD}                                                      \
       -Donnxruntime_USE_ROCM=${ORT_ROCM_BUILD}                                                              \
-      -Donnxruntime_ROCM_HOME=/opt/rocm                                                                     \
-      -Donnxruntime_CUDA_HOME=/usr/local/cuda                                                               \
+      -Donnxruntime_ROCM_HOME=${O2_GPU_ROCM_HOME}                                                           \
+      -Donnxruntime_CUDA_HOME=${O2_GPU_CUDA_HOME}                                                           \
       -DCMAKE_HIP_COMPILER=/opt/rocm/llvm/bin/clang++                                                       \
       -D__HIP_PLATFORM_AMD__=${ORT_ROCM_BUILD}                                                              \
       ${O2_GPU_ROCM_AVAILABLE_ARCH:+-DCMAKE_HIP_ARCHITECTURES="${O2_GPU_ROCM_AVAILABLE_ARCH}"}              \
@@ -155,5 +179,4 @@ alibuild-generate-module --lib > "$MODULEFILE"
 cat >> "$MODULEFILE" <<EoF
 # Our environment
 prepend-path ROOT_INCLUDE_PATH \$PKG_ROOT/include/onnxruntime
-append-path LD_LIBRARY_PATH /opt/rocm/lib
 EoF

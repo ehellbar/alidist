@@ -5,12 +5,14 @@ source: https://github.com/alisw/MadGraph
 requires:
   - Python-modules
   - curl
+  - zlib
+license: GPL-3.0
 build_requires:
   - alibuild-recipe-tools
 ---
 #!/bin/bash -e
 
-rsync -a --exclude='**/.git' --delete --delete-excluded "$SOURCEDIR/" "$BUILDDIR/"
+rsync -a --no-specials --no-devices  --chmod=ug=rwX --exclude '**/.git' --delete --delete-excluded "$SOURCEDIR/" "$BUILDDIR/"
 
 # install internal packages 
 cd "$BUILDDIR"
@@ -20,7 +22,7 @@ install ninja
 install collier
 install RunningCoupling
 install QCDLoop
-install MadAnalysis5
+install MadAnalysis5 --with_zlib=$ZLIB_ROOT
 EOF
 
 # MadGraph uses wget for non macOSx systems, but this might not be available.

@@ -1,6 +1,6 @@
 package: JAliEn-ROOT
 version: "%(tag_basename)s"
-tag: "0.7.15"
+tag: "0.7.16"
 source: https://gitlab.cern.ch/jalien/jalien-root.git
 requires:
   - ROOT
@@ -8,6 +8,7 @@ requires:
   - XRootD
   - libwebsockets
   - libuv
+license: GPL-3.0
 build_requires:
   - json-c
   - CMake

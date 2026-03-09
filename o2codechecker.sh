@@ -1,8 +1,9 @@
 package: o2codechecker
-version: v20.1.7-alice1
-tag: v20.1.7-alice1
+version: v20.1.7-alice2
+tag: v20.1.7-alice2
 requires:
   - Clang:(?!osx*)
+license: GPL-3.0
 build_requires:
   - CMake
   - alibuild-recipe-tools

@@ -1,14 +1,15 @@
 package: ndmspc
 version: "%(tag_basename)s"
-tag: "v0.20250923.0"
+tag: "v1.0.0"
 requires:
   - ROOT
   - JAliEn-ROOT
   - nlohmann_json
-  - opentelemetry-cpp
   - libwebsockets
   - curl
   - libuv
+license: GPL-3.0
+#  - arrow
 build_requires:
   - CMake
   - ninja
@@ -42,6 +43,7 @@ cmake "$SOURCEDIR" "-DCMAKE_INSTALL_PREFIX=$INSTALLROOT"                \
       ${LIBWEBSOCKETS_ROOT:+"-DLIBWEBSOCKETS_ROOT=$LIBWEBSOCKETS_ROOT"} \
       ${NLOHMANN_JSON_ROOT:+"-DNLOHMANN_JSON_ROOT=$NLOHMANN_JSON_ROOT"} \
       ${CURL_ROOT:+"-DCURL_ROOT=$CURL_ROOT"}                            \
+      -DWITH_PARQUET=OFF                                                \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 cmake --build . -- ${JOBS+-j $JOBS} install
