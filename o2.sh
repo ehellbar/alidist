@@ -1,6 +1,6 @@
 package: O2
 version: "%(tag_basename)s"
-tag: "daily-20260312-0000"
+tag: "dev_pull_request6"
 requires:
   - abseil
   - arrow
@@ -42,7 +42,7 @@ build_requires:
   - googlebenchmark
   - O2-customization
   - Clang:(?!osx*)
-source: https://github.com/AliceO2Group/AliceO2
+source: https://github.com/davidrohr/AliceO2
 env:
   VMCWORKDIR: "$O2_ROOT/share"
 prepend_path:
