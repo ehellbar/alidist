@@ -13,7 +13,7 @@ build_requires:
   - Eigen3
   - ninja
   - alibuild-recipe-tools
-source: https://github.com/AliceO2Group/actsO2.git
+source: ssh://git@gitlab.cern.ch:7999/alice3-trackers/wp1-simulationsandperformances/actso2.git
 ---
 #!/bin/bash -ex
 cmake $SOURCEDIR -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
@@ -21,20 +21,6 @@ cmake $SOURCEDIR -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
                  -DCMAKE_PREFIX_PATH=$ACTS_ROOT
 cmake --build . -- ${JOBS:+-j$JOBS}
 cmake --install .
-
-case $ARCHITECTURE in
-    osx*)
-        find $INSTALLROOT/lib/ -name "*.dylib" -exec install_name_tool -add_rpath ${INSTALLROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${INSTALLROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${INSTALLROOT}/python/acts {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${GEANT4_ROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${XERCESC_ROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${ROOT_DYN_PATH} {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${TBB_ROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${HEPMC3_ROOT}/lib {} \;
-        find $INSTALLROOT/python/actso2 -name "*.so" -exec install_name_tool -add_rpath ${PYTHIA_ROOT}/lib {} \;
-	;;
-esac
 
 [[ -d $INSTALLROOT/lib64 ]] && [[ ! -d $INSTALLROOT/lib ]] && ln -sf ${INSTALLROOT}/lib64 $INSTALLROOT/lib
 

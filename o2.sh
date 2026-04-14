@@ -1,6 +1,6 @@
 package: O2
 version: "%(tag_basename)s"
-tag: "daily-20260318-0000"
+tag: "daily-20260414-0000"
 requires:
   - abseil
   - arrow
@@ -161,6 +161,7 @@ incremental_recipe: |
 
 valid_defaults:
   - o2
+  - o2-acts
   - o2-dataflow
   - o2-epn
   - o2-dev-fairroot
