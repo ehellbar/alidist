@@ -42,7 +42,7 @@ build_requires:
   - googlebenchmark
   - O2-customization
   - Clang:(?!osx*)
-source: https://github.com/davidrohr/AliceO2
+source: https://github.com/ehellbar/AliceO2
 env:
   VMCWORKDIR: "$O2_ROOT/share"
 prepend_path:
